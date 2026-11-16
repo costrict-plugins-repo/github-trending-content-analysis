@@ -1,0 +1,22 @@
+{
+  "name": "content-analysis-plugin",
+  "owner": {
+    "name": "Peter Malmkjaer"
+  },
+  "metadata": {
+    "description": "Scientific content analysis for academic research — systematic coding, codebook development, inter-coder reliability and thematic reporting following Krippendorff, Hsieh & Shannon, Mayring, with codebook thematic analysis."
+  },
+  "plugins": [
+    {
+      "name": "content-analysis",
+      "displayName": "Content Analysis",
+      "source": {
+        "source": "github",
+        "repo": "PeterMalmkjaer/content-analysis-plugin",
+        "ref": "v5.0.0-beta.8"
+      },
+      "description": "Scientific content analysis for academic research: systematic coding, codebook development, frequency analysis, inter-coder reliability and thematic reporting following Krippendorff, Hsieh & Shannon, Mayring, with codebook thematic analysis. Includes a /content-analysis command.",
+      "category": "productivity"
+    }
+  ]
+}
