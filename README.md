@@ -1,0 +1,235 @@
+# Content Analysis Plugin
+
+Scientific content analysis for academic research, available for ChatGPT, Codex, and Claude.
+
+**Author:** Peter Malmkjaer ([Peter.Malmkjaer@mail.dk](mailto:Peter.Malmkjaer@mail.dk))
+Independent project by Peter Malmkjaer.
+
+> **Preview release.** The 5.0.0 betas add a source declaration, a procedure for large corpora, an output validator with a known-good fixture, and a clear statement of which methods the skill supports; they are also the first releases in which the Codex/ChatGPT support introduced in 4.3.0 is exercised end to end, and that support has had limited testing. Please report what you find via [issues](https://github.com/PeterMalmkjaer/content-analysis-plugin/issues) — the 5.0.0 release depends on it.
+
+> **Before you rely on it.** The tests so far support using the skill as a pre-coder or a supplementary coder. Its coding cannot stand alone. [`docs/`](docs/README.md) is the way in to the test report, the benchmarks and an earlier external evaluation, and to the conditions that apply to use on research material.
+
+> **Withdrawn versions.** All versions before 5.0.0-beta.3 (1.0.0, 1.1.0, 4.2.0, 4.2.1, 4.2.2, 4.3.0, 5.0.0-beta.1 and 5.0.0-beta.2) are withdrawn and should no longer be used. No test of them against human coding has been documented. They remain in the repository's history so that earlier work can be traced. If you have coded material with a withdrawn version, treat that coding as untested: state which version you used, and consider coding the material again with the current version.
+
+> **Update recommended.** Versions up to and including 5.0.0-beta.6 let Claude run commands and write files without asking. From 5.0.0-beta.7 Claude asks first. This is a security improvement; we recommend updating to 5.0.0-beta.8. The Claude plugin directory offers 5.0.0-beta.4 until its review of 5.0.0-beta.8 is complete. In Claude Code you can update now from this repository: `claude plugin update content-analysis@content-analysis-plugin`, or install as described under [Installation](#installation).
+
+**Version:** 5.0.0-beta.8 · **Overview and documentation:** <https://petermalmkjaer.github.io/content-analysis-plugin/>
+
+---
+
+## What It Does
+
+This plugin enables an AI assistant to perform rigorous, methodologically grounded content analysis on textual material. It follows established content-analysis conventions from Krippendorff (2018), Hsieh & Shannon (2005) and Mayring (2014). For thematic coding it works as a *codebook* thematic analysis in Braun & Clarke's (2021) sense; it does not implement their reflexive TA.
+
+It supports the full workflow from research question to publication-ready output files.
+
+## How This Plugin Can Help You
+
+Use the plugin when you need to turn a collection of texts into systematic, transparent, and research-ready findings. It can help you:
+
+- Analyse interview transcripts, focus-group discussions, open-ended survey responses, reports, policy documents, articles, and other textual material.
+- Develop a clear codebook with definitions, inclusion and exclusion criteria, and examples.
+- Apply deductive codes from an existing theory or discover inductive themes from the material.
+- Pilot and refine a coding scheme before analysing the full collection.
+- Code passages consistently while keeping excerpts and rationales traceable.
+- Calculate or interpret inter-coder reliability when multiple coders are involved.
+- Identify patterns, frequencies, themes, and relationships across documents.
+- Produce structured outputs for further review, reporting, or academic writing.
+
+The plugin guides you through the methodological choices and documents important limitations. You remain in control of the research question, interpretations, and final conclusions.
+
+---
+
+## What the Tests Show
+
+The skill's coding has been compared with human coding on one public corpus (GoEmotions: short Reddit comments, 27 emotions plus neutral), with one AI model, in three pre-registered tests. The tests were run on 5.0.0-beta.6. 5.0.0-beta.7 and 5.0.0-beta.8 are a security update and an improvement; they leave the coding procedure as it was and have not been tested again. Table 1 gives the result; the full account, with protocols, codebooks and every assignment, is in [`docs/benchmarks/`](docs/benchmarks/README.md). A test report with conclusion, assumptions, limitations and recommended use is in [`docs/test-report-5.0.0-beta.6.md`](docs/test-report-5.0.0-beta.6.md).
+
+**Table 1 · What you get** (agreement score = micro-F1, 0–100; 100 would be coding identical to the human raters')
+
+| Your situation | What the skill does | Measured |
+|---|---|---|
+| You have some human-coded material of the same kind (Step 5b) | Calibrates the codebook's decision rules against it, then codes with the full decision procedure | **49–51**, against 44–47 for 5.0.0-beta.3, on three separate samples of 500 comments; the difference exceeds sampling error in all six runs |
+| You have none | Codes from the definitions with a simpler procedure and labels the result *not calibrated against human coding* | **43.5 and 44.7**, against 44.3 and 45.3 for 5.0.0-beta.3: not distinguishable, and not better |
+| Either way | Flags the assignments it found hard (`Review` column) | Flagged comments 27–39, unflagged 46–58 |
+
+What this does not show: other kinds of text (interviews, reports), other models (ChatGPT and Codex were not part of these tests), or calibration material from a different source than the texts being coded. The level itself is specific to a hard task and says little about your material; the comparison is what the tests support. If the quality of the coding matters for your conclusions, set aside human-coded material and let the skill calibrate.
+
+Interviews and policy reports have been tried once, with 5.0.0-beta.3, in an external evaluation in September 2026. Its reports were written by an AI and are published with a notice saying so in [`docs/evaluations/2026-09-beta3-external/`](docs/evaluations/2026-09-beta3-external/README.md). No later version has been run on that material.
+
+---
+
+## Installation
+
+### ChatGPT and Codex
+
+The plugin is distributed through this repository's own marketplace file (`.agents/plugins/marketplace.json`). From 5.0.0-beta.7 that file points at a release tag, not at the `main` branch, so a change on `main` reaches installed copies only when a release is tagged. Nothing is submitted to OpenAI.
+
+**Install** — in the ChatGPT desktop app (Work mode, or Codex in the app), open the **Plugins** directory, add `PeterMalmkjaer/content-analysis-plugin` as a marketplace source, and install **Content Analysis** from the source "Content Analysis Plugin". The IDE extension does not support plugins (per OpenAI's documentation).
+
+**Update** — quit the app completely (on macOS: Cmd+Q, not just closing the window), open it again, then uninstall Content Analysis in the Plugins directory and install it again. The app reads the marketplace only when it starts, so without the restart it reinstalls the old version. Confirmed on 5.0.0-beta.5 → beta.6 (macOS, November 2026). Every release bumps the `version` field, because update mechanisms key on it; the installed version is visible with
+
+```bash
+ls ~/.codex/plugins/cache/content-analysis-plugin/content-analysis/
+```
+
+**Verify the install** — the cache is a git clone of this repository, so the installed copy can be checked against GitHub without trusting the version label. Replace `<version>` with the directory `ls` printed:
+
+```bash
+# 1. the clone is on the commit of the release tag
+git -C ~/.codex/plugins/cache/content-analysis-plugin/content-analysis/<version> rev-parse HEAD
+git ls-remote https://github.com/PeterMalmkjaer/content-analysis-plugin.git 'refs/tags/v<version>^{}'
+
+# 2. the skill text is the released one (compare with the SHA-256 in CHANGELOG.md)
+shasum -a 256 ~/.codex/plugins/cache/content-analysis-plugin/content-analysis/<version>/skills/content-analysis/SKILL.md
+
+# 3. no second copy of the plugin under another marketplace
+ls -d ~/.codex/plugins/cache/*/*content-analysis* 2>/dev/null
+```
+
+The two hashes in step 1 must match, step 2 must print the checksum the changelog gives for that version, and step 3 must print exactly one path. Step 1 assumes the cache is a git clone when the marketplace points at a tag. That held with Codex CLI 0.169.0, installing 5.0.0-beta.7 from GitHub (16 November 2026); it has not yet been confirmed in the ChatGPT app, and step 2 works either way. Then ask ChatGPT, with the plugin active, to quote the sentence in the skill that defines `RESULT: INCOMPLETE` and to give the plugin version — a cached copy proves the files are there, only the answer proves the app is using them.
+
+**Codex CLI** — OpenAI documents `codex plugin marketplace add PeterMalmkjaer/content-analysis-plugin --ref main` and `codex plugin marketplace upgrade content-analysis-plugin` for adding and refreshing a marketplace. In Codex CLI 0.169.0 the plugin is then installed with `codex plugin add content-analysis@content-analysis-plugin`. Adding the marketplace from GitHub and `codex plugin add` were run with Codex CLI 0.169.0 on 16 November 2026, and the tagged commit was installed (see the changelog); `marketplace upgrade` has not been run and is taken from the documentation. If the commands fail, use the Plugins directory and please open an issue with what you saw.
+
+The skill activates automatically when you describe a content-analysis task.
+
+### Claude
+
+Add the plugin to your Claude marketplace and install it:
+
+```bash
+/plugin marketplace add PeterMalmkjaer/content-analysis-plugin
+/plugin install content-analysis@content-analysis-plugin
+```
+
+Or from the terminal with the Claude Code CLI:
+
+```bash
+claude plugin marketplace add PeterMalmkjaer/content-analysis-plugin
+claude plugin install content-analysis@content-analysis-plugin
+```
+
+Once installed, the skill activates automatically when you describe a content-analysis task. In Claude, you can also invoke the workflow explicitly with the `/content-analysis` command.
+
+---
+
+## Components
+
+### Skill: `content-analysis`
+
+Activates automatically when you mention phrases such as "content analysis", "codebook", "thematic analysis", "code the data", "qualitative coding", or "inter-coder reliability".
+
+Provides an eight-step workflow:
+
+1. Clarify research question and unit of analysis
+2. Select approach (quantitative / qualitative / mixed)
+3. Select coding logic (deductive / inductive / abductive)
+4. Develop coding scheme (codebook)
+5. Pilot-code a sample — and, where human-coded material exists, calibrate the codebook against it (Step 5b)
+6. Assess inter-coder reliability
+7. Code the full corpus, with the procedure that fits the codebook's calibration status
+8. Analyse and report
+
+### Reference Files
+
+- [`skills/content-analysis/references/reliability-guide.md`](skills/content-analysis/references/reliability-guide.md) — Inter-coder reliability metrics (Cohen's κ, Fleiss' κ, Krippendorff's α, percentage agreement) with formulas, worked examples, and Python implementation.
+- [`skills/content-analysis/references/coding-approaches.md`](skills/content-analysis/references/coding-approaches.md) — Comparative reference for Mayring's qualitative content analysis, Hsieh & Shannon's three approaches, and Braun & Clarke's thematic analysis, with a decision guide.
+- [`skills/content-analysis/references/protocol-driven-runs.md`](skills/content-analysis/references/protocol-driven-runs.md) — Rules for analyses commissioned in writing or run unattended: deriving the research question when the brief does not state one, the required report skeleton, output-format precedence, and how to proceed without blocking on unanswerable questions.
+
+### Claude command: `/content-analysis`
+
+Run `/content-analysis` to start a content-analysis session directly. Optionally pass arguments describing your documents or research focus. From 5.0.0-beta.7 the command pre-approves no tools: Claude asks, according to your own settings, before it writes files or runs the validator.
+
+---
+
+## Output Files
+
+| File | Format | Description |
+|------|--------|-------------|
+| Codebook | `.xlsx` | Codes with definitions, inclusion/exclusion criteria, examples |
+| Coded data | `.xlsx` | One row per code assignment, with excerpt, provenance, codebook version and notes |
+| Theme summary | `.md` / `.docx` | Narrative findings with method note |
+| Thematic map | `.mermaid` | Visual theme hierarchy |
+| Reliability report | `.xlsx` | ICR calculations (when applicable) |
+
+---
+
+## Usage Example
+
+```
+User: "Use Content analysis. I have 12 interview transcripts about
+remote work attitudes among knowledge workers. I want to identify
+themes inductively."
+
+The assistant will:
+1. Confirm the research question and propose speaking turns as the
+   unit of analysis.
+2. Recommend Hsieh & Shannon's Conventional approach (data-driven,
+   no preconceived categories).
+3. Read a 10–20% sample to develop initial codes through open coding.
+4. Group codes into higher-level categories (axial coding) and
+   present a draft codebook for your review.
+5. Pilot-code a small subset to test the codebook, revise as needed.
+6. Code the full corpus and produce coded_data.xlsx and a theme
+   summary with a method note.
+```
+
+The skill always begins by clarifying your research question and unit of analysis. It will not start coding until these are explicit.
+
+---
+
+## Written Briefs and Unattended Runs
+
+The workflow above assumes a conversation. Analyses are often commissioned differently: a written protocol defines the task, names the deliverables, and no one is available to answer questions while the run proceeds.
+
+For those cases the skill loads `references/protocol-driven-runs.md`, which supplies four rules that replace the conversational assumptions:
+
+1. **Derive the research question.** Briefs typically specify what to do but not what the analysis is for. A deliverable list is not a research question. The skill derives one from the brief's own terms, marks it explicitly as derived, decomposes it into one sub-question per coded dimension, and never proceeds without one.
+2. **Use the full report skeleton.** Task · problem statement and analysis questions · constraints declaration · method · findings (one section per question) · uncertainties · deliverables · references. Written briefs mean the report will be read by someone who was not present.
+3. **The brief's formats take precedence.** Named deliverables, names and paths override the `.xlsx` conventions in the Output Files table above. The format changes; the substance does not.
+4. **Do not block.** In an unattended run, make the most defensible choice, state the assumption at the point it applies, record the rejected alternative, and continue.
+
+Nothing changes for conversational use — the rules apply only when the run is protocol-driven or unattended.
+
+---
+
+## Methodological Transparency
+
+Every analysis produced with this skill includes a method note documenting the research question, corpus description, unit of analysis, approach, coding logic, codebook development process, reliability assessment (when applicable), and limitations. This is essential for academic credibility and reviewers in any peer-reviewed venue.
+
+The skill is explicit about the limitations of LLM-assisted coding: latent content (irony, sarcasm, cultural subtext) may be missed, and results should ideally be validated against a human-coded subsample before publication. What has been measured so far, and what has not, is set out in [`docs/benchmarks/`](docs/benchmarks/README.md).
+
+---
+
+## License
+
+This plugin is released under a **dual license**. See [LICENSE](LICENSE) for full terms.
+
+### Academic & Non-Commercial Use (Free)
+
+Free for academic research, teaching, and non-commercial use. You may use, copy, and adapt the skill for scholarly purposes provided you credit the author:
+
+> Content Analysis Skill by Peter Malmkjaer
+
+### Commercial Use (Paid License Required)
+
+Any commercial use — including integration into paid products, consulting services, corporate training, or resale on marketplaces — requires a separate commercial license. Contact the author for terms and pricing:
+
+**Peter Malmkjaer** — [Peter.Malmkjaer@mail.dk](mailto:Peter.Malmkjaer@mail.dk)
+
+© 2026 Peter Malmkjaer. All rights reserved.
+
+---
+
+## Security
+
+The plugin is plain-text instructions and one validator script; it has no hooks, no MCP servers and no network calls of its own. [SECURITY.md](SECURITY.md) says what it contains and how to report a problem.
+
+## Validating an analysis
+
+`scripts/validate_coding.py` checks a finished coding for traceability: every excerpt is found verbatim in its source, every document in the manifest is coded, every code exists in the codebook, assignments are unique, and the frequency table can be regenerated from the rows. It needs only Python 3; `openpyxl` is optional for reading `.xlsx` directly. `examples/minimal/` is a known-good fixture on which it must pass.
+
+## Citation
+
+If you use this plugin in academic work, please cite:
+
+> Malmkjaer, P. (2026). *Content Analysis Plugin* (Version 5.0.0-beta.8) [Computer software]. https://github.com/PeterMalmkjaer/content-analysis-plugin
